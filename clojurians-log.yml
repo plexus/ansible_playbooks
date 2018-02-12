@@ -18,6 +18,7 @@
         protocol: tcp
   roles:
     - role: ANXS.postgresql
+      tags: postgresql
       postgresql_databases:
         - name: "{{database_name}}"
       postgresql_users:
@@ -26,15 +27,20 @@
           encrypted: no
       postgresql_user_privileges:
         - name: "{{database_user}}"
-          db: "{{datbase_name}}"
+          db: "{{database_name}}"
           priv: "ALL"
 
     - role: ANXS.fail2ban
+      tags: fail2ban
 
     - role: joshualund.ufw
+      tags: ufw
       ufw_connection_rate_limits:
         - {port: 22, protocol: tcp}
       ufw_whitelisted_ports:
         - {port: 22, protocol: tcp}
         - {port: 80, protocol: tcp}
         - {port: 443, protocol: tcp}
+
+    - role: plexus.datomic-pro
+      tags: datomic

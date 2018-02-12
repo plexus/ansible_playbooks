@@ -1,0 +1,7 @@
+---
+# User must define clojure_uberjar_webapp_domain
+clojure_uberjar_webapp_app_name: "{{ clojure_uberjar_webapp_domain | replace('.', '-') }}"
+clojure_uberjar_webapp_app_user: "{{ clojure_uberjar_webapp_app_name }}"
+clojure_uberjar_webapp_app_underscored: "{{ clojure_uberjar_webapp_domain | replace('.', '_') }}"
+clojure_uberjar_webapp_app_root: "/var/www/{{ clojure_uberjar_webapp_app_name }}"
+clojure_uberjar_webapp_app_config_dir: "{{ clojure_uberjar_webapp_app_root }}/config"

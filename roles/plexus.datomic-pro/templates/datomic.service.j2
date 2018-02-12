@@ -1,0 +1,12 @@
+[Unit]
+Description=Datomic Service
+After=network.target
+
+[Service]
+Type=simple
+User=datomic
+ExecStart={{ datomic_dir }}/runtime/bin/transactor -Xms{{ datomic_transactor_memory }} -Xmx{{ datomic_transactor_memory }} {{ datomic_dir }}/datomic-transactor.properties
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

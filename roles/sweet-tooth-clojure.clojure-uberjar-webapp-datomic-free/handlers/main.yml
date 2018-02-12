@@ -1,0 +1,14 @@
+---
+- name: restart datomic
+  service: name=datomic state=restarted
+  become: yes
+  become_method: sudo
+
+
+- name: install schemas
+  command: chdir={{ clojure_uberjar_webapp_app_root }}/ java -Xms200m -Xmx400m  -jar {{ clojure_uberjar_webapp_app_jar_name }} db/install-schemas
+  environment:
+    DB_URI: "{{ datomic_uri }}"
+  tags:
+    - deploy
+    - migration

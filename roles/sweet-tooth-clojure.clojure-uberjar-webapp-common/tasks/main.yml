@@ -1,0 +1,14 @@
+---
+# This sets up the filesystem for the clojure app
+- name: Create user
+  user: home=/home/{{ clojure_uberjar_webapp_app_user }} name={{ clojure_uberjar_webapp_app_user }} state=present
+  tags:
+    - install
+
+- name: Create project directory
+  file: state=directory path={{ clojure_uberjar_webapp_app_root }} owner={{ clojure_uberjar_webapp_app_user }} group={{ clojure_uberjar_webapp_app_user }} mode=755
+  tags:
+    - install
+
+- name: Create config directory
+  file: state=directory path={{ clojure_uberjar_webapp_app_config_dir }} owner={{ clojure_uberjar_webapp_app_user }} group={{ clojure_uberjar_webapp_app_user }} mode=755

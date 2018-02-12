@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Daniel Higginbotham
+  description: Run an uberjar web app
+  company: http://www.braveclojure.com/
+  license: MIT
+  min_ansible_version: 1.2
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - datomic
+dependencies:
+  - sweet-tooth-clojure.clojure-uberjar-webapp-common

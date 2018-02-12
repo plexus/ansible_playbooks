@@ -1,0 +1,11 @@
+########### free mode config ###############
+protocol=free
+host=localhost
+#free mode will use 3 ports starting with this one:
+port=4334
+log-dir={{ datomic_log_dir }}
+data-dir={{ datomic_data_dir }}
+
+memory-index-threshold={{ datomic_transactor_memory_index_threshold }}
+memory-index-max={{ datomic_transactor_memory_index_max }}
+object-cache-max={{ datomic_transactor_object_cache_max }}

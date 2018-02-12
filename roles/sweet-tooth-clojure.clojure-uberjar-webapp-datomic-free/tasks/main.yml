@@ -1,0 +1,76 @@
+- name: Create datomic user.
+  user: name="{{ datomic_user }}" state=present
+  tags:
+    - install
+
+- name: Create datomic directory
+  file: state=directory path="{{ datomic_dir }}" owner="{{ datomic_user }}" group="{{ datomic_user }}" mode=755
+  tags:
+    - install
+    
+- name: Create datomic data directory
+  file: state=directory path="{{ datomic_data_dir }}" owner="{{ datomic_user }}" group="{{ datomic_group }}" mode=755
+  tags:
+    - install
+
+- name: Make datomic log directory
+  file: state=directory path="{{ datomic_log_dir }}" owner="{{ datomic_user }}" group="{{ datomic_group }}" mode=755
+  tags:
+    - install
+  
+- name: Check datomic installation
+  stat: path="{{ datomic_dir }}/runtime"
+  register: datomic_link
+  ignore_errors: true
+  tags:
+    - install
+
+- name: Download datomic
+  get_url: url="{{ datomic_download_url }}" dest="{{ datomic_dir }}/{{ datomic_filename }}"
+  when: not datomic_link.stat.exists
+  tags:
+    - install
+
+- name: Install unzip package
+  apt: pkg=unzip state=installed update-cache=yes
+  tags:
+    - install
+  
+- name: Unpack datomic
+  command: chdir="{{ datomic_dir }}" unzip "{{ datomic_filename }}"
+  when: not datomic_link.stat.exists
+  tags:
+    - install
+
+- name: Link datomic
+  file: src="{{ datomic_dir }}/datomic-free-{{ datomic_version }}"
+        dest="{{ datomic_dir }}/runtime"
+        owner="{{ datomic_user }}"
+        group="{{ datomic_group }}"
+        state=link
+  when: not datomic_link.stat.exists
+  notify: restart datomic
+  tags:
+    - install
+    
+- name: datomic dir permissions
+  shell: chown -R datomic:datomic "{{ datomic_dir }}/{{ datomic_filename }}"
+  tags:
+    - install
+
+- name: Upload datomic properties file
+  template: src=templates/datomic-transactor.properties.j2 dest={{ datomic_dir }}/transactor.properties
+  notify: restart datomic
+  tags:
+    - configure
+
+- name: Upload datomic env config file
+  template: src=templates/datomic-env.j2 dest="{{ datomic_env_path }}"
+  tags:
+    - configure
+    
+- name: Upload datomic upstart config file
+  template: src=templates/datomic-upstart.conf.j2 dest=/etc/init/datomic.conf
+  notify: restart datomic
+  tags:
+    - configure

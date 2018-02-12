@@ -1,0 +1,7 @@
+---
+datomic_user: datomic
+datomic_group: "{{ datomic_user }}"
+datomic_dir: /opt/datomic
+datomic_data_dir: /opt/datomic/data
+datomic_log_dir: /var/log/datomic
+datomic_transactor_memory: 2048m
