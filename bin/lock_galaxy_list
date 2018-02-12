@@ -1,0 +1,2 @@
+#!/bin/sh
+ansible-galaxy list -p roles/ > galaxy-roles.yaml
