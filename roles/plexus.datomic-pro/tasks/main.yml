@@ -1,84 +1,67 @@
-- name: Create datomic user.
+- name: Create Datomic user.
   user: name="{{ datomic_user }}" state=present
-  tags:
-    - install
 
-- name: Create datomic directory
+- name: Create Datomic directory
   file: state=directory path="{{ datomic_dir }}" owner="{{ datomic_user }}" group="{{ datomic_user }}" mode=755
-  tags:
-    - install
 
-- name: Create datomic data directory
-  file: state=directory path="{{ datomic_data_dir }}" owner="{{ datomic_user }}" group="{{ datomic_group }}" mode=755
-  tags:
-    - install
-
-- name: Make datomic log directory
+- name: Make Datomic log directory
   file: state=directory path="{{ datomic_log_dir }}" owner="{{ datomic_user }}" group="{{ datomic_group }}" mode=755
-  tags:
-    - install
 
-- name: Check datomic installation
+- name: Check Datomic installation
   stat: path="{{ datomic_dir }}/runtime"
   register: datomic_link
   ignore_errors: true
-  tags:
-    - install
 
 - name: Install unzip package
   apt: pkg=unzip state=installed update-cache=yes
-  tags:
-    - install
 
-- name: Find Datomic pro zip file
-  find:
-    paths: /root
-    patterns: "datomic-pro-*.zip"
-  register: datomic_pro_zip
-  tags: datomic-version
+- name: Download Datomic
+  get_url:
+    url: "https://my.datomic.com/repo/com/datomic/datomic-pro/{{ datomic_pro_version }}/datomic-pro-{{ datomic_pro_version }}.zip"
+    url_username: "{{ datomic_pro_email }}"
+    url_password: "{{ datomic_pro_download_key }}"
+    dest: "{{ datomic_dir }}/datomic-pro-{{ datomic_pro_version }}.zip"
 
-- name: Derive Datomic version
-  set_fact: datomic_version="{{ datomic_pro_zip.files[0].path | regex_search('([0-9]+\.[0-9]+\.[0-9]+)') }}"
-  tags: datomic-version
-
-- debug: msg="Datomic version={{ datomic_version }}"
-  tags: datomic-version
-
-- name: Unpack datomic
+- name: Unpack Datomic
   unarchive:
-    src: "{{ datomic_pro_zip.files[0].path }}"
+    src: "{{ datomic_dir }}/datomic-pro-{{ datomic_pro_version }}.zip"
     dest: "{{ datomic_dir }}"
     remote_src: yes
   when: not datomic_link.stat.exists
-  tags:
-    - install
 
 - name: Link datomic
-  file: src="{{ datomic_dir }}/datomic-pro-{{ datomic_version }}"
+  file: src="{{ datomic_dir }}/datomic-pro-{{ datomic_pro_version }}"
         dest="{{ datomic_dir }}/runtime"
         owner="{{ datomic_user }}"
         group="{{ datomic_group }}"
         state=link
   when: not datomic_link.stat.exists
   notify: restart datomic
-  tags:
-    - install
 
 - name: datomic dir permissions
-  shell: chown -R datomic:datomic "{{ datomic_dir }}"
-  tags:
-    - install
+  file:
+    path: "{{ datomic_dir }}"
+    owner: datomic
+    group: datomic
+    recurse: true
 
-- name: Upload Datomic transactor configuration
+- name: Upload CREATE TABLE datomic_kvs script
+  copy:
+    src: templates/postgresql_create_datomic_kvs.sql
+    dest: "{{ datomic_dir }}/postgresql_create_datomic_kvs.sql"
+
+- name: Execute CREATE TABLE datomic_kvs script
+  shell: |
+    PGPASSWORD="{{ database_password }}" psql -f "{{ datomic_dir }}/postgresql_create_datomic_kvs.sql" -U "{{ database_user }}" "{{ database_name }}"
+
+  - name: Upload Datomic transactor configuration
   template:
     src: templates/datomic-transactor.properties.j2
-    dest: "{{ datomic_dir }}/transactor.properties"
+    dest: "{{ datomic_dir }}/datomic-transactor.properties"
   notify: restart datomic
-  tags: configure
 
 - name: Upload Datomic Systemd startup script
   template:
     src: templates/datomic.service.j2
     dest: "/etc/systemd/system/datomic.service"
   notify: restart datomic
-  tags: configure

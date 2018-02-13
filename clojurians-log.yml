@@ -1,5 +1,7 @@
 ---
 - name: Install prerequisites for the Clojurians Log app
+  vars_files:
+    - vars/clojurians_log_secrets.yml
   hosts: clojurians_log
   become: true
   vars:
@@ -42,5 +44,9 @@
         - {port: 80, protocol: tcp}
         - {port: 443, protocol: tcp}
 
+    - role: ansiblebit.oracle-java
+      oracle_java_set_as_default: yes
+
     - role: plexus.datomic-pro
       tags: datomic
+      datomic_pro_version: 0.9.5561.56

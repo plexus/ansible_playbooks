@@ -1,0 +1,2 @@
+#!/bin/sh
+gpg --quiet --batch --use-agent --decrypt /home/arne/.gnupg/vault_passphrase.gpg

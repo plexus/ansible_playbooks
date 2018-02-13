@@ -1,0 +1,6 @@
+# ovh vps, datomic experiment
+[sugar_tracker]
+host1 ansible_ssh_host=217.182.68.20 ansible_user=root ansible_python_interpreter=/usr/bin/python3
+
+[clojurians_log]
+clojurians_log_staging ansible_host=188.166.114.86 ansible_user=root ansible_python_interpreter=/usr/bin/python3
