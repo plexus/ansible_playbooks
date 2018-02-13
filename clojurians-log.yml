@@ -59,3 +59,32 @@
         ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf99gah0qnmLQn3yix8NFk2JsV0kHTzciLLHVUFfJmCsb4sHY4yKAuiMfp9E0s71tIsmVfw9GdNfhit/nHqQG/VGjgYSR4zIRD0Rr0V5GrDsSS/jWotNfb0JXt+Up310BE/diL7vi8uTwe3t5THymiuibFLgoaHvnbFE1VYojpyiGcSOGmE9GrDOuN08mg2ynb6FAK2/tnfo+ZBwl7g3A9pMvjHUwRzFyq+Z+Mdmf8c8x4qLrikUNv/U3TL1WPXUB4rwiUwhnRqadR/uBGYUwWJ1vfh4wl1aZqnyVRM3YfDmb5720m2IXX1MPH0CDio8moT9bwIfSRyBUt3zDuft/R arne@twoflower
       tags: clojure-web-app
       clojure_app_service_start_after: datomic.service
+
+    - role: jdauphant.nginx
+      tags: nginx
+      nginx_sites:
+        default:
+          - listen 80
+          - server_name _
+          - |
+            location / {
+                root  /var/clojure_app/app/resources/public;
+                try_files $uri @proxy_app;
+                expires max;
+                access_log off;
+                if ($request_filename ~ "^.*/(.+\.(zip|tgz|iso|gz|vcf))$"){
+                    set $fname $1;
+                    add_header Content-Disposition 'attachment; filename="$fname"';
+                }
+            }
+          - |
+            location @proxy_app {
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                # Fix the “It appears that your reverse proxy set up is broken" error.
+                proxy_pass http://localhost:4983;
+                proxy_read_timeout 90;
+                proxy_redirect http://localhost:4983 https://clojurians-log.clojureverse.org;
+            }
