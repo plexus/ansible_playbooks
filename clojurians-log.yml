@@ -7,7 +7,7 @@
   vars:
     database_name: "clojurians_log_datomic"
     database_user: "clojurians_log"
-    database_password: "Fdu5EdbXoDTpCjrFwiiTJ7pDOxE7dhpgzc"
+    database_password: ""
     database_hostname: "localhost"
     database_port: 5432
     fail2ban_services:
