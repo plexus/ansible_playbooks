@@ -1,0 +1,4 @@
+%{{ clojure_app_user }} ALL= NOPASSWD: /bin/systemctl start {{ clojure_app_name }}
+%{{ clojure_app_user }} ALL= NOPASSWD: /bin/systemctl stop {{ clojure_app_name }}
+%{{ clojure_app_user }} ALL= NOPASSWD: /bin/systemctl restart {{ clojure_app_name }}
+%{{ clojure_app_user }} ALL= NOPASSWD: /bin/systemctl status {{ clojure_app_name }}

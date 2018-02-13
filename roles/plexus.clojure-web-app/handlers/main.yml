@@ -1,0 +1,6 @@
+
+---
+- name: restart clojure app
+  service: name="{{ clojure_app_name }}" state=restarted
+  become: yes
+  become_method: sudo

@@ -1,0 +1,63 @@
+---
+- name: Install prerequisites
+  apt: name=ruby
+
+- name: Install Leiningen
+  get_url:
+    url: https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+    dest: /usr/local/bin/lein
+    mode: 0755
+  tags: leiningen
+
+- name: Create Clojure app user
+  user:
+    name: "{{ clojure_app_user }}"
+    state: present
+    home: "{{ clojure_app_home_dir }}"
+    generate_ssh_key: yes
+
+- name: Create Git directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ clojure_app_user }}"
+    group: "{{ clojure_app_user }}"
+  with_items:
+    - "{{ clojure_app_repo_dir }}"
+    - "{{ clojure_app_app_dir }}"
+
+- name: Create receiving git repo
+  command: git init --bare
+  become: yes
+  become_user: "{{ clojure_app_user }}"
+  args:
+    chdir: "{{ clojure_app_repo_dir }}"
+    creates: "{{ clojure_app_repo_dir }}/HEAD"
+
+- name: Copy post-receive script
+  template:
+    src: templates/post-receive.j2
+    dest: "{{ clojure_app_repo_dir }}/hooks/post-receive"
+    owner: "{{ clojure_app_user }}"
+    group: "{{ clojure_app_user }}"
+    mode: 0755
+  tags: post-receive
+
+- name: Install authorized_keys
+  copy:
+    content: "{{ clojure_app_authorized_keys }}"
+    dest: "{{ clojure_app_home_dir }}/.ssh/authorized_keys"
+    owner: "{{ clojure_app_user }}"
+    group: "{{ clojure_app_user }}"
+    mode: 0600
+
+- name: Upload Clojure app Systemd startup script
+  template:
+    src: templates/clojure_app.service.j2
+    dest: "/etc/systemd/system/{{ clojure_app_name }}.service"
+  notify: restart clojure app
+
+- name: Allow clojure_app user to restart app
+  template:
+    src: templates/clojure_app.sudoers.j2
+    dest: /etc/sudoers.d/{{ clojure_app_user }}

@@ -1,0 +1,14 @@
+---
+clojure_app_name: clojure_app
+clojure_app_user: "{{ clojure_app_name }}"
+clojure_app_home_dir: "/var/{{ clojure_app_name }}"
+clojure_app_repo_dir: "{{ clojure_app_home_dir }}/repo"
+clojure_app_app_dir: "{{ clojure_app_home_dir }}/app"
+
+# Execute the :main namespace configured in project.clj
+clojure_app_main_command: "/usr/local/bin/lein with-profile +production,-dev run"
+
+# Execute the "prep" alias configured in project.clj
+clojure_app_prep_command: "/usr/local/bin/lein with-profile +production,-dev prep"
+
+clojure_app_service_start_after: network.target

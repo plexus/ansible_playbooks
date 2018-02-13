@@ -1,0 +1,13 @@
+[Unit]
+Description={{ clojure_app_name }}
+After={{ clojure_app_service_start_after }}
+
+[Service]
+Type=simple
+User={{ clojure_app_user }}
+WorkingDirectory={{ clojure_app_app_dir }}
+ExecStart={{ clojure_app_main_command }}
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
