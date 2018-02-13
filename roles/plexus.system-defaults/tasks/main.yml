@@ -1,0 +1,10 @@
+---
+- name: Refresh apt cache
+  apt:
+    update_cache: yes
+
+- name: Install packages that should be available
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - htop

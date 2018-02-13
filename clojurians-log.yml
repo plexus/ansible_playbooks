@@ -19,6 +19,9 @@
         maxretry: 3
         protocol: tcp
   roles:
+    - role: plexus.system-defaults
+    - role: jnv.unattended-upgrades
+
     - role: ANXS.postgresql
       tags: postgresql
       postgresql_databases:

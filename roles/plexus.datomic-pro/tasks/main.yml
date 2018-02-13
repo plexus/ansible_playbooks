@@ -54,7 +54,7 @@
   shell: |
     PGPASSWORD="{{ database_password }}" psql -f "{{ datomic_dir }}/postgresql_create_datomic_kvs.sql" -U "{{ database_user }}" "{{ database_name }}"
 
-  - name: Upload Datomic transactor configuration
+- name: Upload Datomic transactor configuration
   template:
     src: templates/datomic-transactor.properties.j2
     dest: "{{ datomic_dir }}/datomic-transactor.properties"
