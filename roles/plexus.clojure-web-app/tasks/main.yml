@@ -51,11 +51,22 @@
     group: "{{ clojure_app_user }}"
     mode: 0600
 
+- name: Create environment file
+  copy:
+    content: "{{ clojure_app_env_vars }}"
+    dest: "{{ clojure_app_home_dir }}/{{ clojure_app_name }}.env"
+    owner: "{{ clojure_app_user }}"
+    group: "{{ clojure_app_user }}"
+    mode: 0644
+  tags: env-file
+  notify: restart clojure app
+
 - name: Upload Clojure app Systemd startup script
   template:
     src: templates/clojure_app.service.j2
     dest: "/etc/systemd/system/{{ clojure_app_name }}.service"
   notify: restart clojure app
+  tags: env-file
 
 - name: Allow clojure_app user to restart app
   template:

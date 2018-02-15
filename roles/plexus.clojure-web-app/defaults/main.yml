@@ -12,3 +12,5 @@ clojure_app_main_command: "/usr/local/bin/lein with-profile +production,-dev run
 clojure_app_prep_command: "/usr/local/bin/lein with-profile +production,-dev prep"
 
 clojure_app_service_start_after: network.target
+
+clojure_app_env_vars: ""

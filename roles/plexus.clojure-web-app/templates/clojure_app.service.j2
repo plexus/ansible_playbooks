@@ -8,6 +8,7 @@ User={{ clojure_app_user }}
 WorkingDirectory={{ clojure_app_app_dir }}
 ExecStart={{ clojure_app_main_command }}
 Restart=on-abort
+EnvironmentFile={{ clojure_app_home_dir }}/{{ clojure_app_name }}.env
 
 [Install]
 WantedBy=multi-user.target
