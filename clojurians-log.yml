@@ -7,9 +7,10 @@
   vars:
     database_name: "clojurians_log_datomic"
     database_user: "clojurians_log"
-    database_password: "Fdu5EdbXoDTpCjrFwiiTJ7pDOxE7dhpgzc"
     database_hostname: "localhost"
     database_port: 5432
+    clojurians_app_http_port: 4242
+    datomic_pro_version: 0.9.5561.56
     fail2ban_services:
       - name: ssh
         enabled: true
@@ -52,13 +53,18 @@
 
     - role: plexus.datomic-pro
       tags: datomic
-      datomic_pro_version: 0.9.5561.56
 
     - role: plexus.clojure-web-app
       clojure_app_authorized_keys: |
         ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf99gah0qnmLQn3yix8NFk2JsV0kHTzciLLHVUFfJmCsb4sHY4yKAuiMfp9E0s71tIsmVfw9GdNfhit/nHqQG/VGjgYSR4zIRD0Rr0V5GrDsSS/jWotNfb0JXt+Up310BE/diL7vi8uTwe3t5THymiuibFLgoaHvnbFE1VYojpyiGcSOGmE9GrDOuN08mg2ynb6FAK2/tnfo+ZBwl7g3A9pMvjHUwRzFyq+Z+Mdmf8c8x4qLrikUNv/U3TL1WPXUB4rwiUwhnRqadR/uBGYUwWJ1vfh4wl1aZqnyVRM3YfDmb5720m2IXX1MPH0CDio8moT9bwIfSRyBUt3zDuft/R arne@twoflower
+
+      clojure_app_main_command: "/usr/local/bin/lein with-profile +production,-dev run {{ clojure_app_home_dir }}/config.edn"
       tags: clojure-web-app
+
       clojure_app_service_start_after: datomic.service
+
+    - role: plexus.clojurians-log
+      tags: clojurians-log
 
     - role: jdauphant.nginx
       tags: nginx
@@ -84,7 +90,7 @@
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;
                 # Fix the “It appears that your reverse proxy set up is broken" error.
-                proxy_pass http://localhost:4983;
+                proxy_pass http://localhost:{{ clojurians_app_http_port }};
                 proxy_read_timeout 90;
-                proxy_redirect http://localhost:4983 https://clojurians-log.clojureverse.org;
+                proxy_redirect http://localhost:{{ clojurians_app_http_port }} https://clojurians-log.clojureverse.org;
             }

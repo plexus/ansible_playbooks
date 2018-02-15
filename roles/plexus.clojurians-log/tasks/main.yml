@@ -1,0 +1,10 @@
+---
+- name: Install the app configuration
+  template:
+    src: templates/config.edn
+    dest: "{{ clojure_app_home_dir }}/config.edn"
+
+- name: Create .lein/profiles.clj to load datomic-pro
+  template:
+    src: templates/profiles.clj.j2
+    dest: "{{ clojure_app_home_dir }}/.lein/profiles.clj"

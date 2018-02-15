@@ -1,0 +1,3 @@
+{:datomic {:uri "datomic:sql://{{ clojure_app_name }}?jdbc:postgresql://localhost:5432/{{ database_name }}?user={{ database_user }}&password={{ database_password }}"}
+ :http {:port {{ clojurians_app_http_port }}}
+ :slack {:api-token "{{ slack_api_token }}"}}

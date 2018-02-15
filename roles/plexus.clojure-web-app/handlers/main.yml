@@ -1,6 +1,13 @@
 
 ---
-- name: restart clojure app
-  service: name="{{ clojure_app_name }}" state=restarted
+- name: restart clojure service
+  service:
+    name: "{{ clojure_app_name }}"
+    state: restarted
+    daemon_reload: yes
   become: yes
   become_method: sudo
+  listen: "restart clojure app"
+
+- debug: msg="Clojure app reloaded / restarted"
+  listen: "restart clojure app"
