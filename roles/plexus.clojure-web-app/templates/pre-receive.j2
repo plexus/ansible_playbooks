@@ -1,0 +1,83 @@
+#!/usr/bin/env ruby
+
+require 'open3'
+
+# 1. Read STDIN (Format: "from_commit to_commit branch_name")
+@from, @to, @branch = ARGF.read.split(" ")
+
+# Only deploy if master branch was pushed
+if @branch !~ /master$/
+  puts "Received branch #{@branch}, not deploying."
+  exit 1
+else
+  puts "Deploying #{@branch}: #{@from} --> #{@to}"
+end
+
+def exec!(*args)
+  puts "----> #{args.join(' ')}"
+
+  Open3.popen3(*args) do |_, stdout, stderr, thread|
+    {:out => stdout, :err => stderr}.each do |key, stream|
+      Thread.new do
+        until (raw_line = stream.gets).nil? do
+          puts raw_line.split("\n").map {|l| "#{key.to_s.upcase} | #{l}" }.join
+        end
+      end
+    end
+    yield thread if block_given?
+  end
+end
+
+def update_work_tree!(target)
+  puts "Updating working tree {{clojure_app_app_dir}} to #{target}"
+  exec!("git", "-c", "advice.detachedHead=false", "--work-tree={{ clojure_app_app_dir }}", "checkout", "--force", target) do |thread|
+    unless thread.value.success?
+      puts "Updating working tree failed (#{thread.value.exitstatus})"
+      exit thread.value.exitstatus
+    end
+  end
+end
+
+def rollback!
+  update_work_tree!(@from)
+  # Call /bin/systemctl directly
+  exec!("sudo", "/bin/systemctl", "restart", "{{ clojure_app_name }}") do |thread|
+    unless thread.value.success?
+      puts "FATAL: failed to restart app after rollback. (#{thread.value.exitstatus})"
+      exit thread.value.exitstatus
+    end
+  end
+end
+
+def try_exec!(*args)
+  exec!(*args) do |thread|
+    unless thread.value.success?
+      puts "***** Command failed: #{args.join(' ')}, rolling back."
+      rollback!
+      exit thread.value.exitstatus
+    end
+  end
+end
+
+def systemctl!(op)
+  try_exec!("sudo", "/bin/systemctl", op.to_s, "{{ clojure_app_name }}")
+end
+
+PREP_CMD = "{{ clojure_app_prep_command }}"
+
+### main
+
+update_work_tree!(@to)
+
+if PREP_CMD.empty?
+  systemctl! :restart
+else
+  systemctl! :stop
+  try_exec!("/bin/sh", "-c", "cd {{ clojure_app_app_dir }}; #{PREP_CMD}")
+  systemctl! :start
+end
+
+# TODO journalctl -f -u {{clojure_app_name}}
+# until http healtch check passes, or timeout, in which case we roll back
+
+systemctl! :status

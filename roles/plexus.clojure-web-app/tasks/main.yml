@@ -34,14 +34,14 @@
     chdir: "{{ clojure_app_repo_dir }}"
     creates: "{{ clojure_app_repo_dir }}/HEAD"
 
-- name: Copy post-receive script
+- name: Copy pre-receive script
   template:
-    src: templates/post-receive.j2
-    dest: "{{ clojure_app_repo_dir }}/hooks/post-receive"
+    src: templates/pre-receive.j2
+    dest: "{{ clojure_app_repo_dir }}/hooks/pre-receive"
     owner: "{{ clojure_app_user }}"
     group: "{{ clojure_app_user }}"
     mode: 0755
-  tags: post-receive
+  tags: pre-receive
 
 - name: Install authorized_keys
   copy:
