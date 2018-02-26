@@ -9,12 +9,24 @@
     mode: 0755
   tags: leiningen
 
+- name: Do Leiningen self-install
+  command /usr/local/bin/lein self-install
+  become: yes
+  become_user: "{{ clojure_app_user }}"
+
+- group:
+    name: "{{ clojure_app_user }}"
+    state: present
+
 - name: Create Clojure app user
   user:
     name: "{{ clojure_app_user }}"
     state: present
     home: "{{ clojure_app_home_dir }}"
     generate_ssh_key: yes
+    groups:
+      - "{{ clojure_app_user }}"
+      - systemd-journal
 
 - name: Create Git directories
   file:

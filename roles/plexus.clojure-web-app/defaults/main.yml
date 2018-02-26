@@ -14,3 +14,6 @@ clojure_app_prep_command: "/usr/local/bin/lein with-profile +production,-dev pre
 clojure_app_service_start_after: network.target
 
 clojure_app_env_vars: ""
+
+clojure_app_health_check_url: "http://localhost:10555/healthcheck"
+clojure_app_health_check_timeout: 20

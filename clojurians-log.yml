@@ -61,8 +61,9 @@
         ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf99gah0qnmLQn3yix8NFk2JsV0kHTzciLLHVUFfJmCsb4sHY4yKAuiMfp9E0s71tIsmVfw9GdNfhit/nHqQG/VGjgYSR4zIRD0Rr0V5GrDsSS/jWotNfb0JXt+Up310BE/diL7vi8uTwe3t5THymiuibFLgoaHvnbFE1VYojpyiGcSOGmE9GrDOuN08mg2ynb6FAK2/tnfo+ZBwl7g3A9pMvjHUwRzFyq+Z+Mdmf8c8x4qLrikUNv/U3TL1WPXUB4rwiUwhnRqadR/uBGYUwWJ1vfh4wl1aZqnyVRM3YfDmb5720m2IXX1MPH0CDio8moT9bwIfSRyBUt3zDuft/R arne@twoflower
 
       clojure_app_main_command: "/usr/local/bin/lein with-profile +production,-dev run {{ clojure_app_home_dir }}/config.edn"
-      tags: clojure-web-app
+      clojure_app_health_check_url: "http://localhost:{{clojurians_app_http_port}}/healthcheck"
 
+      tags: clojure-web-app
       clojure_app_service_start_after: datomic.service
 
     - role: plexus.clojurians-log

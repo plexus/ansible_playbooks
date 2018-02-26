@@ -1,17 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'open3'
-
-# 1. Read STDIN (Format: "from_commit to_commit branch_name")
-@from, @to, @branch = ARGF.read.split(" ")
-
-# Only deploy if master branch was pushed
-if @branch !~ /master$/
-  puts "Received branch #{@branch}, not deploying."
-  exit 1
-else
-  puts "Deploying #{@branch}: #{@from} --> #{@to}"
-end
+require 'net/http'
 
 def exec!(*args)
   puts "----> #{args.join(' ')}"
@@ -63,9 +53,60 @@ def systemctl!(op)
   try_exec!("sudo", "/bin/systemctl", op.to_s, "{{ clojure_app_name }}")
 end
 
+def health_check_200_OK?
+  Net::HTTP.get_response(URI("{{ clojure_app_health_check_url }}")).is_a?(Net::HTTPSuccess)
+rescue StandardError => e
+  false
+end
+
+def health_check!
+  {% if clojure_app_health_check_url %}
+  Open3.popen3("/bin/journalctl -f -u {{clojure_app_name}} &") do |_, stdout, stderr, thread|
+    {:out => stdout, :err => stderr}.each do |key, stream|
+      Thread.new do
+        until (raw_line = stream.gets).nil? do
+          puts raw_line.split("\n").map {|l| "LOG | #{l}" }.join
+        end
+      end
+    end
+
+    @timeout = false
+
+    Thread.new do
+      sleep({{ clojure_app_health_check_timeout }})
+      @timeout = true
+    end
+
+    until @timeout || health_check_200_OK?
+      sleep(0.2)
+    end
+
+    if @timeout
+      puts "Healtcheck {{ clojure_app_health_check_url }} timed out, rolling back!"
+      Process.kill("KILL", thread.pid) rescue nil
+      rollback!
+    end
+  end
+  {% else %}
+  systemctl! :status
+  {% endif %}
+end
+
 PREP_CMD = "{{ clojure_app_prep_command }}"
 
+############################################################
 ### main
+
+# Read STDIN (Format: "from_commit to_commit branch_name")
+@from, @to, @branch = ARGF.read.split(" ")
+
+# Only deploy if master branch was pushed
+if @branch !~ /master$/
+  puts "Received branch #{@branch}, not deploying."
+  exit 1
+else
+  puts "Deploying #{@branch}: #{@from} --> #{@to}"
+end
 
 update_work_tree!(@to)
 
@@ -77,7 +118,4 @@ else
   systemctl! :start
 end
 
-# TODO journalctl -f -u {{clojure_app_name}}
-# until http healtch check passes, or timeout, in which case we roll back
-
-systemctl! :status
+health_check!

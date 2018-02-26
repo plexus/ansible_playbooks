@@ -4,10 +4,19 @@
     src: templates/config.edn
     dest: "{{ clojure_app_home_dir }}/config.edn"
 
+- name: Ensures {{clojure_app_home_dir}}/.lein dir exists
+  file:
+    path: "{{ clojure_app_home_dir }}/.lein"
+    state: directory
+    owner: "{{ clojure_app_user }}"
+    group: "{{ clojure_app_user }}"
+
 - name: Create .lein/profiles.clj to load datomic-pro
   template:
     src: templates/profiles.clj.j2
     dest: "{{ clojure_app_home_dir }}/.lein/profiles.clj"
+    owner: "{{ clojure_app_user }}"
+    group: "{{ clojure_app_user }}"
 
 - name: Create SSH public key
   copy:
