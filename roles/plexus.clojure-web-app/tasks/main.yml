@@ -2,19 +2,9 @@
 - name: Install prerequisites
   apt: name=ruby
 
-- name: Install Leiningen
-  get_url:
-    url: https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
-    dest: /usr/local/bin/lein
-    mode: 0755
-  tags: leiningen
 
-- name: Do Leiningen self-install
-  command /usr/local/bin/lein self-install
-  become: yes
-  become_user: "{{ clojure_app_user }}"
-
-- group:
+- name: Create Clojure app group
+  group:
     name: "{{ clojure_app_user }}"
     state: present
 
@@ -27,6 +17,20 @@
     groups:
       - "{{ clojure_app_user }}"
       - systemd-journal
+
+- name: Install Leiningen
+  get_url:
+    url: https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein
+    dest: /usr/local/bin/lein
+    mode: 0755
+  tags: leiningen
+
+- name: Do Leiningen self-install
+  command: /usr/local/bin/lein self-install
+  become: yes
+  become_user: "{{ clojure_app_user }}"
+  args:
+    chdir "{{ clojure_app_home_dir }}"
 
 - name: Create Git directories
   file:
