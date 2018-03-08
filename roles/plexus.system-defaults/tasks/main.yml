@@ -19,3 +19,8 @@
     - 22
     - 80
     - 443
+
+- name: generate dhparam.pem
+  command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+  args:
+    creates: /etc/ssl/certs/dhparam.pem

@@ -2,5 +2,5 @@
  :http {:port {{ clojurians_app_http_port }}}
  :slack {:api-token "{{ slack_api_token }}"
          :log-dir "{{ clojure_app_home_dir }}/logs/logs"}
- :message-page {:cache-time #profile {:default (* 24 60 60)
+ :message-page {:cache-time #profile {:default 3600
                                       :dev 0}}}}
