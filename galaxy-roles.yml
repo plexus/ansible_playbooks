@@ -1,3 +1,7 @@
-- joshualund.ufw, master
 - ANXS.postgresql, v1.9.1
+- jnv.unattended-upgrades, v1.4.0
+- sweet-tooth-clojure.clojure-uberjar-webapp-common, master
+- jdauphant.nginx, v2.14
+- sweet-tooth-clojure.clojure-uberjar-webapp-datomic-free, master
 - ANXS.fail2ban, v1.2.0
+- ansiblebit.oracle-java, 5.14.12

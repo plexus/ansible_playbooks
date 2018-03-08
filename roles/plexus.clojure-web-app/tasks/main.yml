@@ -30,7 +30,8 @@
   become: yes
   become_user: "{{ clojure_app_user }}"
   args:
-    chdir "{{ clojure_app_home_dir }}"
+    chdir: "{{ clojure_app_home_dir }}"
+    creates: "{{ clojure_app_home_dir }}/.lein/self-installs/leiningen-2.8.1-standalone.jar"
 
 - name: Create Git directories
   file:

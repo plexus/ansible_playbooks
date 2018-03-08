@@ -21,7 +21,7 @@ fail2ban_action: "action_"
 fail2ban_auth_log: "/var/log/auth.log"
 
 fail2ban_services:
-  - name: "ssh"
+  - name: "sshd"
     enabled: "true"
     port: "ssh"
     filter: "sshd"

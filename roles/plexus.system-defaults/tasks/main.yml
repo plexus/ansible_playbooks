@@ -10,3 +10,12 @@
     - htop
     - git
     - rlwrap
+
+- name: Set up ufw firewall
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+  with_items:
+    - 22
+    - 80
+    - 443

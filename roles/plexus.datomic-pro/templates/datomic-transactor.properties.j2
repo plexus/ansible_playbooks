@@ -31,22 +31,12 @@ sql-driver-class=org.postgresql.Driver
 # sql-validation-query=select 1
 
 
-
 ################################################################
 # See http://docs.datomic.com/capacity.html
 
-
-# Recommended settings for -Xmx4g production usage.
-# memory-index-threshold=32m
-# memory-index-max=512m
-# object-cache-max=1g
-
-# Recommended settings for -Xmx1g usage, e.g. dev laptops.
-memory-index-threshold=32m
-memory-index-max=256m
-object-cache-max=128m
-
-
+memory-index-threshold={{ datomic_memory_index_threshold }}
+memory-index-max={{ datomic_memory_index_max }}
+object-cache-max={{ datomic_object_cache_max }}
 
 ## OPTIONAL ####################################################
 

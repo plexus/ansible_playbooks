@@ -41,15 +41,6 @@
     - role: ANXS.fail2ban
       tags: fail2ban
 
-    - role: joshualund.ufw
-      tags: ufw
-      ufw_connection_rate_limits:
-        - {port: 22, protocol: tcp}
-      ufw_whitelisted_ports:
-        - {port: 22, protocol: tcp}
-        - {port: 80, protocol: tcp}
-        - {port: 443, protocol: tcp}
-
     - role: ansiblebit.oracle-java
       oracle_java_set_as_default: yes
 
