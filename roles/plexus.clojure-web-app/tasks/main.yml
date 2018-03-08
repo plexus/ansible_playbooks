@@ -85,6 +85,12 @@
   notify: restart clojure app
   tags: env-file
 
+- name: Start the Clojure app
+  service:
+    name: "{{ clojure_app_name }}"
+    state: started
+    enabled: yes
+
 - name: Allow clojure_app user to restart app
   template:
     src: templates/clojure_app.sudoers.j2
