@@ -1,0 +1,13 @@
+[Unit]
+Description=Slack RTM logging bot
+After=network.target
+
+[Service]
+WorkingDirectory={{ clojure_app_home_dir }}/rtmbot
+ExecStart={{ clojure_app_home_dir}}/rtmbot/run-rtmbot.sh
+User={{ clojure_app_user }}
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

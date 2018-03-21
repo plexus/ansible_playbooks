@@ -23,6 +23,7 @@
         protocol: tcp
   roles:
     - role: plexus.system-defaults
+
     - role: jnv.unattended-upgrades
 
     - role: ANXS.postgresql
@@ -137,3 +138,5 @@
                 proxy_read_timeout 90;
                 proxy_redirect http://localhost:{{ clojurians_app_http_port }} https://clojurians-log.clojureverse.org;
             }
+
+    - role: plexus.rtmbot
