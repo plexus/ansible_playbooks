@@ -95,8 +95,9 @@
       letsencrypt_webroot_path: "{{ clojure_app_app_dir }}/resources/public"
       letsencrypt_email: arne@arnebrasseur.net
       letsencrypt_cert_domains:
-       - clojurians-log-staging.clojureverse.org
+       - clojurians-log.clojureverse.org
       letsencrypt_renewal_command_args: '--renew-hook "systemctl restart nginx"'
+      tags: letsencrypt
 
     - role: jdauphant.nginx
       tags: nginx

@@ -3,6 +3,7 @@
   template:
     src: templates/config.edn
     dest: "{{ clojure_app_home_dir }}/config.edn"
+  tags: app-config
 
 - name: Ensures {{clojure_app_home_dir}}/.lein dir exists
   file:
