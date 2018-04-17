@@ -11,6 +11,7 @@
     database_port: 5432
     clojurians_app_http_port: 4242
     datomic_pro_version: 0.9.5561.56
+    datomic_object_cache_max: 8g
     clojure_app_env_vars: |
       JVM_OPTS="-Dclojure.server.myrepl={:port,50505,:accept,clojure.core.server/repl}"
     fail2ban_services:
