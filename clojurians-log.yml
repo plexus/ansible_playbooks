@@ -11,9 +11,9 @@
     database_port: 5432
     clojurians_app_http_port: 4242
     datomic_pro_version: 0.9.5561.56
-    datomic_object_cache_max: 8g
+    datomic_object_cache_max: 2g
     clojure_app_env_vars: |
-      JVM_OPTS="-Dclojure.server.myrepl={:port,50505,:accept,clojure.core.server/repl}"
+      JVM_OPTS="-Dclojure.server.myrepl={:port,50505,:accept,clojure.core.server/repl} -Ddatomic.ObjectCacheMax=7g -Ddatomic.memcachedServers=127.0.0.1:11211"
     fail2ban_services:
       - name: ssh
         enabled: true
@@ -46,8 +46,13 @@
     - role: ansiblebit.oracle-java
       oracle_java_set_as_default: yes
 
+    - role: geerlingguy.memcached
+      tags: memcached
+      memcached_memory_limit: 4096
+
     - role: plexus.datomic-pro
       tags: datomic
+      datomic_memcached: 127.0.0.1:11211
 
     - role: plexus.clojure-web-app
       clojure_app_authorized_keys: |
