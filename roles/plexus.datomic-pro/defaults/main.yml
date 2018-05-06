@@ -4,7 +4,8 @@ datomic_group: "{{ datomic_user }}"
 datomic_dir: /opt/datomic
 datomic_data_dir: /opt/datomic/data
 datomic_log_dir: /var/log/datomic
-datomic_transactor_memory: 4g
+datomic_transactor_initial_heap: 1g
+datomic_transactor_max_heap: 4g
 datomic_memory_index_threshold: 32m
 datomic_memory_index_max: 512m
-datomic_object_cache_max: 1g
+datomic_object_cache_max: 2g

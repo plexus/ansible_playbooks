@@ -61,15 +61,15 @@ object-cache-max={{ datomic_object_cache_max }}
 # See http://docs.datomic.com/storage.html
 # Memcached configuration.
 
-{% if datomic_memcached_host %}
-memcached={{ datomic_memcached_host }}
+{% if datomic_memcached is defined %}
+memcached={{ datomic_memcached }}
 {% endif %}
 
-{% if datomic_memcached_username %}
+{% if datomic_memcached_username is defined %}
 memcached-username={{ datomic_memcached_username }}
 {% endif %}
 
-{% if datomic_memcached_password %}
+{% if datomic_memcached_password is defined %}
 memcached-password={{ datomic_memcached_password }}
 {% endif %}
 

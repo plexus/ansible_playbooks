@@ -13,7 +13,7 @@
     datomic_pro_version: 0.9.5561.56
     datomic_object_cache_max: 2g
     clojure_app_env_vars: |
-      JVM_OPTS="-Dclojure.server.myrepl={:port,50505,:accept,clojure.core.server/repl} -Ddatomic.ObjectCacheMax=7g -Ddatomic.memcachedServers=127.0.0.1:11211"
+      JVM_OPTS="-Dclojure.server.myrepl={:port,50505,:accept,clojure.core.server/repl} -Xmx8g -Xms2g -Ddatomic.ObjectCacheMax=7g -Ddatomic.memcachedServers=127.0.0.1:11211"
     fail2ban_services:
       - name: ssh
         enabled: true
